@@ -1,67 +1,110 @@
-#include "main.h"
-
-void print_buffer(char buffer[], int *buff_ind);
-
 /**
- * _printf - Printf function
- * @format: format.
- * Return: Printed chars.
+ * _printf - function that produces output according to a format
+ *
+ * Description: function that produces output according to a format
+ *
+ * @format: String Format
+ *
+ * Return: number of charracters printed
  */
+
 int _printf(const char *format, ...)
 {
-int i, printed = 0, printed_chars = 0;
+	int number_of_characters_printed, format_position, format_length;
+	char *string_placeholder;
+	va_list all_parameters;
 
-int flags, width, precision, size, buff_ind = 0;
-va_list list;
-char buffer[BUFF_SIZE];
+	format_length = strlen(format);
+	number_of_characters_printed = 0;
 
-if (format == NULL)
-return (-1);
+	va_start(all_parameters, format);
 
-va_start(list, format);
+	format_position = 0;
 
-for (i = 0; format && format[i] != '\0'; i++)
-{
-if (format[i] != '%')
-{
-buffer[buff_ind++] = format[i];
-if (buff_ind == BUFF_SIZE)
-print_buffer(buffer, &buff_ind);
-/* write(1, &format[i], 1);*/
-printed_chars++;
-}
-else
-{
-print_buffer(buffer, &buff_ind);
-flags = get_flags(format, &i);
-width = get_width(format, &i, list);
-precision = get_precision(format, &i, list);
-size = get_size(format, &i);
-++i;
-printed = handle_print(format, &i, list, buffer,
-flags, width, precision, size);
-if (printed == -1)
-return (-1);
-printed_chars += printed;
-}
-}
-print_buffer(buffer, &buff_ind);
+	while (format[format_position])
+	{
+		if ((format_position + 1) <= (format_length - 1))
+		{
+			if (format[format_position] == '%')
+			{
+				switch (format[format_position + 1])
+				{
+					case 'c':
+						_putchar(va_arg(all_parameters, int));
+						number_of_characters_printed++;
+						format_position += 2;
+						break;
+					case 's':
+						string_placeholder = (char *) va_arg(all_parameters, char *);
+						number_of_characters_printed += _puts(string_placeholder);
+						format_position += 2;
+						break;
+					case '%':
+						_putchar('%');
+						number_of_characters_printed++;
+						format_position += 2;
+						break;
+					case 'i':
+					case 'd':
+						number_of_characters_printed = _puts_integer(va_arg(all_parameters, int));
+						format_position += 2;
+						break;
+					case 'b':
+						number_of_characters_printed = _puts_binary(va_arg(all_parameters, int));
+						format_position += 2;
+						break;
+					case 'u':
+						number_of_characters_printed = _puts_unsigned_integer(va_arg(all_parameters, unsigned int));
+						format_position += 2;
+						break;
+					case 'o':
+						number_of_characters_printed = _puts_octal(va_arg(all_parameters, unsigned int));
+						format_position += 2;
+						break;
+					case 'x':
+						number_of_characters_printed = _puts_hex(va_arg(all_parameters, unsigned int), 1);
+						format_position += 2;
+						break;
+					case 'X':
+						number_of_characters_printed = _puts_hex(va_arg(all_parameters, unsigned int), 0);
+						format_position += 2;
+						break;
+					case 'p':
+						number_of_characters_printed = _puts_pointer(va_arg(all_parameters, void *));
+						format_position += 2;
+						break;
 
-va_end(list);
+					default:
+						_putchar(format[format_position]);
+						number_of_characters_printed++;
+						format_position++;
+						break;
+				}
 
-return (printed_chars);
-}
+			}
+			else if (format[format_position] == '\\')
+			{
+				_putchar(format[format_position]);
+				number_of_characters_printed++;
+				format_position++;
 
-/**
- * print_buffer - Prints the contents of the buffer if it exist
- * @buffer: Array of chars
- * @buff_ind: Index at which to add next char, represents the length.
- */
+			}
+			else
+			{
+				_putchar(format[format_position]);
+				number_of_characters_printed++;
+				format_position++;
+			}
+		}
+		else
+		{
+			_putchar(format[format_position]);
+			number_of_characters_printed++;
+			format_position++;
+		}
+	}
 
-void print_buffer(char buffer[], int *buff_ind)
-{
-if (*buff_ind > 0)
-write(1, &buffer[0], *buff_ind);
+	va_end(all_parameters);
 
-*buff_ind = 0;
+	return (number_of_characters_printed);
 }
