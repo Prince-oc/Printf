@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 /**
  * ev_print_func - returns the amount of identifiers.
  * @s: argument indentifier
@@ -47,5 +48,5 @@ int ev_print_func(const char *s, int index)
 			index = first_index;
 		}
 	}
-	 (j);
+	return (j);
 }
