@@ -1,4 +1,6 @@
 #include "main.h"
+#define UNUSED(x) (void)(x)
+
 /************************* PRINT CHAR *************************/
 
 /**
@@ -73,6 +75,7 @@ int print_string(va_list types, char buffer[],
 
 	return (write(1, str, length));
 }
+
 /************************* PRINT PERCENT SIGN *************************/
 /**
  * print_percent - Prints a percent sign
